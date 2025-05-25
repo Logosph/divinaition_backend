@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import user
+from app.routers.user import router
 from app.config.settings import settings
 
 app = FastAPI(title="User Service", root_path="/api/v1/user")
@@ -15,7 +15,7 @@ app.add_middleware(
 )
 
 # Подключаем роутеры
-app.include_router(user.router)
+app.include_router(router)
 
 @app.get("/")
 async def root():
