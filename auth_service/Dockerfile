@@ -2,7 +2,7 @@ FROM python:3.10
 LABEL authors="logosph"
 
 WORKDIR /app
-COPY . .
+COPY . /app
 
 ENV PYTHONPATH=/app
 
