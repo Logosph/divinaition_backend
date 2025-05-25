@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..db.crud.user import create_user, get_user_by_email, verify_password
 from ..schemas.auth import SignupRequest, SigninRequest, AccessTokenResponse
 from ..utils.auth import create_access_token
+from ..utils.user_service import create_user_in_user_service
 from ..db.db_vitals import get_async_session
 
 router = APIRouter(tags=["Авторизация"])
@@ -17,7 +18,7 @@ async def signup(user_data: SignupRequest, db: AsyncSession = Depends(get_async_
             detail="Email already registered"
         )
     
-    # Создаем нового пользователя
+    # Создаем нового пользователя в auth_service
     user = await create_user(db, user_data.email, user_data.password)
     if not user:
         raise HTTPException(
@@ -25,8 +26,20 @@ async def signup(user_data: SignupRequest, db: AsyncSession = Depends(get_async_
             detail="Could not create user"
         )
     
+    try:
+        # Создаем пользователя в user_service
+        await create_user_in_user_service(user.email, user.hashed_password)
+    except Exception as e:
+        # Если не удалось создать пользователя в user_service, удаляем его из auth_service
+        await db.delete(user)
+        await db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Could not create user in user service"
+        )
+    
     # Создаем токен доступа
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"sub": str(user.id)})
     return AccessTokenResponse(access_token=access_token)
 
 @router.post("/signin", response_model=AccessTokenResponse)
@@ -47,5 +60,5 @@ async def signin(user_data: SigninRequest, db: AsyncSession = Depends(get_async_
         )
     
     # Создаем токен доступа
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"sub": str(user.id)})
     return AccessTokenResponse(access_token=access_token) 

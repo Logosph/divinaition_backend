@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_HOST: str = "localhost"
-    POSTGRES_PORT: int = 25432
-    POSTGRES_DB: str = "divinaition_auth"
+    POSTGRES_PORT: int = 45432
+    POSTGRES_DB: str = "divinaition_user"
 
     @property
     def DATABASE_URL(self) -> str:
@@ -24,9 +24,6 @@ class Settings(BaseSettings):
     CORS_CREDENTIALS: bool = True
     CORS_METHODS: List[str] = ["*"]
     CORS_HEADERS: List[str] = ["*"]
-
-    # Service URLs
-    USER_SERVICE_URL: str = "http://localhost:8001/api/v1/user"
 
     class Config:
         env_file = ".env"

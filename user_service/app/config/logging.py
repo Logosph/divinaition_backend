@@ -55,6 +55,6 @@ def logger_settings(service_name, log_level):
     }
 
 
-log_settings = logger_settings('AUTH_SERVICE', 'DEBUG')
+log_settings = logger_settings('USER_SERVICE', 'DEBUG')
 dictConfig(log_settings)
 logger = logging.getLogger('logger')
