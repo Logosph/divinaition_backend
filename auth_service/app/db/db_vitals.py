@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import declarative_base, sessionmaker
 from typing import AsyncGenerator
 
-from app.config.logger import logger
+from app.config.logging import logger
 from app.config.settings import settings as config
 
 
