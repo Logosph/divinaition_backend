@@ -53,6 +53,31 @@ services:
           memory: 2G
 
 
+  divinaition_reading_pg:
+    image: postgres:latest
+    container_name: divinaition_reading_pg
+    environment:
+      POSTGRES_USER: $READING_POSTGRES_USER
+      POSTGRES_PASSWORD: $READING_POSTGRES_PASSWORD
+      POSTGRES_DB: $READING_POSTGRES_NAME
+    env_file:
+      - .env
+    ports:
+      - "55432:5432"
+    volumes:
+      - divinaition_reading_pg:/var/lib/data
+    command: [ "postgres", "-c", "log_statement=all" ]
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ", $USER_POSTGRES_USER, " -d ", $USER_POSTGRES_NAME ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
   # Services
   divinaition_auth_service:
     build:
@@ -123,6 +148,30 @@ services:
           memory: 1600M
     restart: on-failure
 
+  divinaition_readings_service:
+    build:
+      context: readings_service
+      dockerfile: Dockerfile
+    command: sh -c 'sh scripts/startapp.sh'
+    container_name: divinaition_readings_service
+    ports:
+      - "8013:8000"
+    volumes:
+      - ./readings_service:/app
+    env_file:
+      - ./readings_service/.env
+    healthcheck:
+      test: [ "CMD", "curl", "localhost:8013/docs" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1600M
+    restart: on-failure
+
 volumes:
   divinaition_auth_pg:
   divinaition_user_pg:
+  divinaition_reading_pg:
