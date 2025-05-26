@@ -13,6 +13,7 @@ async def get_user_by_id(db: AsyncSession, user_id: int):
 
 async def create_user(db: AsyncSession, user_data: CreateUserRequest):
     db_user = User(
+        id=user_data.id,
         email=user_data.email,
         password_hash=user_data.password_hash
     )

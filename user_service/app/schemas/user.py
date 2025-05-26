@@ -18,5 +18,6 @@ class UserInfoResponse(BaseModel):
 
 class CreateUserRequest(BaseModel):
     """Внутренний запрос от auth_service для создания пользователя"""
+    id: int
     email: EmailStr
     password_hash: str 

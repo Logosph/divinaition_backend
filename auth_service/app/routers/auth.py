@@ -27,8 +27,8 @@ async def signup(user_data: SignupRequest, db: AsyncSession = Depends(get_async_
         )
     
     try:
-        # Создаем пользователя в user_service
-        await create_user_in_user_service(user.email, user.hashed_password)
+        # Создаем пользователя в user_service с тем же id
+        await create_user_in_user_service(user.id, user.email, user.hashed_password)
     except Exception as e:
         # Если не удалось создать пользователя в user_service, удаляем его из auth_service
         await db.delete(user)

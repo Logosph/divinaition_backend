@@ -100,6 +100,29 @@ services:
           memory: 1600M
     restart: on-failure
 
+  divinaition_llm_service:
+    build:
+      context: llm_service
+      dockerfile: Dockerfile
+    command: sh -c 'sh scripts/startapp.sh'
+    container_name: divinaition_llm_service
+    ports:
+      - "8012:8000"
+    volumes:
+      - ./llm_service:/app
+    env_file:
+      - ./llm_service/.env
+    healthcheck:
+      test: [ "CMD", "curl", "localhost:8012/docs" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1600M
+    restart: on-failure
+
 volumes:
   divinaition_auth_pg:
   divinaition_user_pg:

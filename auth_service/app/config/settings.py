@@ -27,6 +27,7 @@ class Settings(BaseSettings):
 
     # Service URLs
     USER_SERVICE_URL: str = "http://localhost:8001/api/v1/user"
+    # http://divinaition_user_service:8000/api/v1/user
 
     class Config:
         env_file = ".env"
