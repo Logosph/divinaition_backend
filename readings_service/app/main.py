@@ -5,6 +5,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.routers import card, template, reading
 from app.config.settings import settings
 from app.tasks.card_descriptions import update_card_descriptions
+from app.utils.background_tasks import BackgroundTaskManager
 
 app = FastAPI(title="Readings Service", root_path="/api/v1/readings")
 
@@ -22,8 +23,16 @@ app.include_router(reading.router)
 
 # Настройка планировщика
 scheduler = AsyncIOScheduler()
+
+async def scheduled_update_card_descriptions():
+    """Запланированное обновление описаний карт"""
+    await BackgroundTaskManager.start_task(
+        "scheduled_update_card_descriptions",
+        update_card_descriptions()
+    )
+
 scheduler.add_job(
-    update_card_descriptions,
+    scheduled_update_card_descriptions,
     CronTrigger(hour=0, minute=0, timezone="UTC"),
     id="update_card_descriptions",
     replace_existing=True
