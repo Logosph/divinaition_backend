@@ -21,6 +21,8 @@ class Settings(BaseSettings):
 
     # Service URLs
     LLM_SERVICE_URL: str = "http://localhost:8012/api/v1/llm"
+    USER_SERVICE_URL: str = "http://localhost:8011/api/v1/user"
+    USER_SERVICE_TOKEN: str = ""  # Токен для внутреннего взаимодействия между сервисами
 
     # CORS settings
     CORS_ORIGINS: List[str] = ["*"]

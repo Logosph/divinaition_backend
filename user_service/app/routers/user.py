@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..db.crud.user import get_user_by_id, update_user_name, create_user
+from ..db.crud.user import get_user_by_id, update_user_name, create_user, update_card_of_the_day
 from ..schemas.user import UpdateNameRequest, UserInfoResponse, CreateUserRequest
 from ..utils.auth import get_current_user_id
 from ..db.db_vitals import get_async_session
@@ -32,8 +32,12 @@ async def get_me(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
+    
+    # Обновляем карту дня если необходимо
+    user = await update_card_of_the_day(db, user)
+    
     return UserInfoResponse(
-        uuid=str(user.id),  # Преобразуем id в строку для uuid
+        uuid=str(user.id),
         name=user.name,
         email=user.email,
         date_of_registration=user.date_of_registration,

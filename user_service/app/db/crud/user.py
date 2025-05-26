@@ -2,6 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.user import User
 from ...schemas.user import CreateUserRequest
+import random
+from datetime import datetime, time, timezone
 
 async def get_user_by_email(db: AsyncSession, email: str):
     result = await db.execute(select(User).where(User.email == email))
@@ -28,4 +30,18 @@ async def update_user_name(db: AsyncSession, user_id: int, name: str):
         user.name = name
         await db.commit()
         await db.refresh(user)
+    return user
+
+async def update_card_of_the_day(db: AsyncSession, user: User) -> User:
+    """Обновляет карту дня пользователя если необходимо"""
+    now = datetime.now(timezone.utc)
+    today_start = datetime.combine(now.date(), time.min, tzinfo=timezone.utc)
+    
+    # Проверяем, нужно ли обновлять карту
+    if not user.last_card_update or user.last_card_update < today_start:
+        user.card_of_the_day = random.randint(0, 77)
+        user.last_card_update = now
+        await db.commit()
+        await db.refresh(user)
+    
     return user 
