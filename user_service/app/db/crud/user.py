@@ -35,7 +35,11 @@ async def update_user_name(db: AsyncSession, user_id: int, name: str):
 async def update_card_of_the_day(db: AsyncSession, user: User) -> User:
     """Обновляет карту дня пользователя если необходимо"""
     now = datetime.now(timezone.utc)
-    today_start = datetime.combine(now.date(), time.min, tzinfo=timezone.utc)
+    today_start = datetime.combine(now.date(), time.min).replace(tzinfo=timezone.utc)
+    
+    # Если last_card_update наивный (без timezone), добавляем UTC
+    if user.last_card_update and user.last_card_update.tzinfo is None:
+        user.last_card_update = user.last_card_update.replace(tzinfo=timezone.utc)
     
     # Проверяем, нужно ли обновлять карту
     if not user.last_card_update or user.last_card_update < today_start:
