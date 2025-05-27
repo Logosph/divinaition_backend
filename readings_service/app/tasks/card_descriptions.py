@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import select
 from app.db.models.reading import Card
 from app.db.db_vitals import get_async_session
@@ -15,7 +15,7 @@ async def update_card_descriptions():
             cards = result.scalars().all()
             
             # Текущая дата
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             weekday = now.strftime("%A")
             date = now.strftime("%Y-%m-%d")
             

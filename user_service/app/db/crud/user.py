@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models.user import User
+from ..models.user import User, get_utc_now
 from ...schemas.user import CreateUserRequest
 import random
 from datetime import datetime, time, timezone
