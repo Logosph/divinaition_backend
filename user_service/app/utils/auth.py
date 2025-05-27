@@ -7,7 +7,7 @@ security = HTTPBearer()
 
 async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> int:
     try:
-        token = credentials.credentials.split(" ")
+        token = credentials.credentials
         if credentials.scheme != "Bearer":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
